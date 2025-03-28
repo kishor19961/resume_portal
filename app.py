@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
-import pandas as pd
+import csv
 from datetime import datetime
 import pytz
 import requests
@@ -20,8 +20,14 @@ def get_sheet_data():
     current_time = time.time()
     if sheet_cache['data'] is None or (current_time - sheet_cache['timestamp']) > CACHE_DURATION:
         try:
-            df = pd.read_csv(SHEET_URL)
-            sheet_cache['data'] = df.values.tolist()
+            response = requests.get(SHEET_URL)
+            response.raise_for_status()  # Raise an exception for bad status codes
+            
+            # Parse CSV data
+            lines = response.text.splitlines()
+            reader = csv.reader(lines)
+            next(reader)  # Skip header row
+            sheet_cache['data'] = list(reader)
             sheet_cache['timestamp'] = current_time
         except Exception as e:
             print(f"Error reading sheet: {e}")
@@ -40,7 +46,7 @@ def get_profile_counts(job_id):
     for row in data:
         if str(row[0]) == str(job_id):
             counts['All'] += 1
-            status = row[3] if len(row) > 3 and pd.notna(row[3]) else 'New'
+            status = row[3] if len(row) > 3 and row[3] else 'New'
             if status in counts:
                 counts[status] += 1
             else:
@@ -54,7 +60,7 @@ def get_profiles(job_id, status='All'):
     
     for i, row in enumerate(data, start=2):
         if str(row[0]) == str(job_id):
-            current_status = row[3] if len(row) > 3 and pd.notna(row[3]) else 'New'
+            current_status = row[3] if len(row) > 3 and row[3] else 'New'
             if status == 'All' or current_status == status:
                 profiles.append({
                     'id': i,
@@ -116,6 +122,21 @@ def profile_view():
                          pdf_url=pdf_url,
                          timestamp=datetime.now(pytz.UTC).strftime('%Y-%m-%d %H:%M:%S'),
                          user='kishor19961')
+
+@app.route('/test-sheet')
+def test_sheet():
+    try:
+        data = get_sheet_data()
+        return jsonify({
+            'success': True,
+            'rows': len(data),
+            'sample': data[:2] if data else []
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        })
 
 if __name__ == '__main__':
     app.run(debug=True)

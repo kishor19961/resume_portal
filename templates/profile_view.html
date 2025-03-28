@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Profile View{% endblock %}
+
+{% block content %}
+<h1>Profile View</h1>
+<div class="pdf-container">
+    <iframe id="pdfViewer" src="{{ pdf_url }}" frameborder="0"></iframe>
+</div>
+<div class="action-buttons">
+    <button onclick="alert('Status update not available in read-only mode')">Accept</button>
+    <button class="reject" onclick="alert('Status update not available in read-only mode')">Reject</button>
+    <a href="{{ url_for('profile_list', job_id=job_id, status='All') }}"><button>Back</button></a>
+</div>
+{% endblock %}

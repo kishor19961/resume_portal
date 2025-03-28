@@ -10,7 +10,7 @@ app = Flask(__name__)
 app.secret_key = 'your-secret-key'
 
 # Replace with your public Google Sheet URL
-SHEET_URL = "https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID/export?format=csv"
+SHEET_URL = "https://docs.google.com/spreadsheets/d/1ERZMPrh3siXBYUYPgu62Z3ULpjqlTdDrD4P1xWzVMRk/export?format=csv"
 
 # Cache the sheet data for 1 minute to avoid too many requests
 sheet_cache = {'data': None, 'timestamp': 0}

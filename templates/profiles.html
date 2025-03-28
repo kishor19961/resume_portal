@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Job Profiles{% endblock %}
+
+{% block content %}
+<h1>Job Profiles</h1>
+<table>
+    <tr>
+        <th>Section</th>
+        <th>Number of Profiles</th>
+    </tr>
+    <tr>
+        <td>All</td>
+        <td><a href="{{ url_for('profile_list', job_id=job_id, status='All') }}">{{ counts.All }}</a></td>
+    </tr>
+    <tr>
+        <td>New</td>
+        <td><a href="{{ url_for('profile_list', job_id=job_id, status='New') }}">{{ counts.New }}</a></td>
+    </tr>
+    <tr>
+        <td>Rejected</td>
+        <td><a href="{{ url_for('profile_list', job_id=job_id, status='Rejected') }}">{{ counts.Rejected }}</a></td>
+    </tr>
+    <tr>
+        <td>Shortlisted</td>
+        <td><a href="{{ url_for('profile_list', job_id=job_id, status='Shortlisted') }}">{{ counts.Shortlisted }}</a></td>
+    </tr>
+</table>
+<a href="{{ url_for('index') }}"><button>Back</button></a>
+{% endblock %}
